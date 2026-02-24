@@ -26,26 +26,46 @@ opacity:0;
 transform:scale(0.7);
 transition: all 3s ease;
 text-shadow:0 0 18px rgba(255,255,255,0.9);
-z-index:9999; /* ทำให้ข้อความอยู่บนสุด */
+z-index:9999;
 }
 
-/* กล่องลอย */
+/* ฟอง */
 .float{
 position:absolute;
-width:220px;
-height:140px;
-border-radius:14px;
+width:60px;
+height:60px;
+border-radius:50%;
 overflow:hidden;
-box-shadow:0 10px 30px rgba(0,0,0,0.25);
+box-shadow:
+0 4px 12px rgba(0,0,0,0.25),
+inset 0 0 10px rgba(255,255,255,0.5);
 transition:all 14s linear;
 z-index:1;
+background:rgba(255,255,255,0.15);
+backdrop-filter: blur(3px);
 }
 
+/* แสงสะท้อนฟอง */
+.float::before{
+content:"";
+position:absolute;
+top:6px;
+left:14px;
+width:18px;
+height:18px;
+background:rgba(255,255,255,0.7);
+border-radius:50%;
+filter:blur(3px);
+}
+
+/* รูป / วิดีโอ */
 .float video,
 .float img{
 width:100%;
 height:100%;
 object-fit:cover;
+border-radius:50%;
+display:block;
 }
 </style>
 </head>
@@ -73,29 +93,23 @@ window.addEventListener("load",startMusic)
 document.addEventListener("click",startMusic)
 document.addEventListener("touchstart",startMusic)
 
-/* ข้อความชุดแรก */
+/* ข้อความ */
 const messages = [
 "เธอยังจำได้มั้ย",
 "เวลาที่เราอยู่ด้วยกัน",
 "พี่โคตรมีความสุขเลย",
-"พี่ก็ไม่มีอะไรตอบแทนมาก",
-"แต่พี่อยากบอกว่า",
-"ที่รักหนูมากนะ"
+"พี่อยากบอกว่า",
+"พี่รักหนูมากนะ"
 ]
 
-/* ข้อความเล่นต่อ */
 const loopMessages = [
 "คิดถึงนะ",
 "อยากอยู่ด้วยกันนานๆ",
 "ทุกช่วงเวลาสำคัญมาก",
 "ขอบคุณที่อยู่ด้วยกัน",
-"รักมากจริงๆ",
-"เธอคือคนที่พี่รักมากที่สุด",
-"ถึงเราจะอยู่ห่างกันแต่สักวันจะได้อยู่ด้วยกัน",
-"พี่จะรอวันที่ได้อยู่ด้วยกันนะ"
+"รักมากจริงๆ"
 ]
 
-/* คลิป */
 const videos = [
 "https://files.catbox.moe/58rz1z.mp4",
 "https://files.catbox.moe/ur56oh.mp4",
@@ -104,7 +118,6 @@ const videos = [
 "https://files.catbox.moe/5z1p2a.mp4"
 ]
 
-/* รูป */
 const images = [
 "https://files.catbox.moe/v9gd8n.jpg",
 "https://files.catbox.moe/4pclvj.jpg",
@@ -160,7 +173,6 @@ setTimeout(()=>text.remove(),2000)
 },3500)
 }
 
-/* ข้อความเล่นต่อ */
 function startLoopText(){
 setInterval(()=>{
 if(showingText) return
@@ -176,16 +188,17 @@ showingText = false
 },5000)
 }
 
-/* ทิศทางออก */
+/* ฟองออกจากขอบจอ */
 function randomExit(){
 const side = Math.floor(Math.random()*4)
 
-if(side===0) return {x:-300, y:Math.random()*window.innerHeight}
-if(side===1) return {x:window.innerWidth+300, y:Math.random()*window.innerHeight}
-if(side===2) return {x:Math.random()*window.innerWidth, y:-300}
-return {x:Math.random()*window.innerWidth, y:window.innerHeight+300}
+if(side===0) return {x:-120, y:Math.random()*window.innerHeight}
+if(side===1) return {x:window.innerWidth+120, y:Math.random()*window.innerHeight}
+if(side===2) return {x:Math.random()*window.innerWidth, y:-120}
+return {x:Math.random()*window.innerWidth, y:window.innerHeight+120}
 }
 
+/* สร้างฟอง */
 function createFloat(type,src){
 const box = document.createElement("div")
 box.className="float"
@@ -198,29 +211,53 @@ media.src=src
 media.autoplay=true
 media.loop=true
 media.muted=true
+media.playsInline=true
+media.preload="auto"
+media.onloadeddata=startMove
 }else{
 media=document.createElement("img")
 media.src=src
+media.onload=startMove
 }
 
 box.appendChild(media)
+
+const start = randomExit()
+box.style.left = start.x + "px"
+box.style.top = start.y + "px"
+
+function startMove(){
 scene.appendChild(box)
 
-/* เริ่มกลางจอ */
-box.style.left = (window.innerWidth/2 - 110) + "px"
-box.style.top = (window.innerHeight/2 - 70) + "px"
+const insideX = Math.random()*(window.innerWidth-60)
+const insideY = Math.random()*(window.innerHeight-60)
 
-/* ค่อยๆลอยออก */
+setTimeout(()=>{
+box.style.left = insideX + "px"
+box.style.top = insideY + "px"
+},100)
+
 setTimeout(()=>{
 const end = randomExit()
 box.style.left = end.x + "px"
 box.style.top = end.y + "px"
-},800)
+},9000)
 
 setTimeout(()=>{
 box.remove()
-spawn(type)
+floatingCount--
 },14000)
+}
+}
+
+/* ระบบให้มี 10 ฟองตลอด */
+let floatingCount = 0
+const MIN_FLOAT = 10
+
+function spawnRandom(){
+const type = Math.random() > 0.5 ? "video" : "image"
+floatingCount++
+spawn(type)
 }
 
 function spawn(type){
@@ -234,8 +271,17 @@ createFloat("image",src)
 }
 
 function startFloating(){
-setInterval(()=>spawn("video"),3500)
-setInterval(()=>spawn("image"),3500)
+
+for(let i=0;i<MIN_FLOAT;i++){
+spawnRandom()
+}
+
+setInterval(()=>{
+if(floatingCount < MIN_FLOAT){
+spawnRandom()
+}
+},600)
+
 }
 </script>
 
