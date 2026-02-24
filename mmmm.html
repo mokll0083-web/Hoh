@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>พิสูจน์ความรัก</title>
+
+<style>
+body{
+margin:0;
+background:black;
+overflow:hidden;
+font-family: "Kanit", sans-serif;
+color:white;
+}
+
+/* เพลง */
+audio{
+display:none;
+}
+
+/* ข้อความลอย */
+#introText{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%) scale(0.5);
+font-size:40px;
+text-align:center;
+opacity:0;
+transition:all 4s ease;
+z-index:9999;
+}
+
+#introText.show{
+opacity:1;
+transform:translate(-50%,-50%) scale(1);
+}
+
+/* เกม */
+#game{
+display:none;
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:#111;
+padding:30px;
+border-radius:20px;
+text-align:center;
+width:90%;
+max-width:500px;
+}
+
+button{
+padding:12px 20px;
+margin:10px;
+border:none;
+border-radius:12px;
+background:#ff4da6;
+color:white;
+font-size:16px;
+cursor:pointer;
+}
+
+button:hover{
+background:#ff1a8c;
+}
+
+input{
+padding:10px;
+font-size:16px;
+border-radius:10px;
+border:none;
+margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- เพลง -->
+<audio id="bgm" autoplay loop>
+<source src="https://files.catbox.moe/nzxwlu.mp4" type="video/mp4">
+</audio>
+
+<!-- ข้อความเริ่ม -->
+<div id="introText">
+จงเล่นเกมปลดล็อค 2 ทีม<br>
+มีทั้งหมด 3 ด่าน<br>
+พิสูจน์ความรักของคุณ
+</div>
+
+<!-- เกม -->
+<div id="game">
+
+<div id="stage"></div>
+
+</div>
+
+<script>
+
+let stage = 1
+const stageDiv = document.getElementById("stage")
+
+/* เริ่มข้อความ */
+setTimeout(()=>{
+document.getElementById("introText").classList.add("show")
+},1000)
+
+setTimeout(()=>{
+document.getElementById("introText").style.opacity=0
+},7000)
+
+setTimeout(()=>{
+document.getElementById("introText").style.display="none"
+startGame()
+},9000)
+
+/* เริ่มเกม */
+function startGame(){
+document.getElementById("game").style.display="block"
+loadStage()
+}
+
+function loadStage(){
+
+if(stage==1){
+stageDiv.innerHTML=`
+<h2>ด่าน 1 : ทายคำถาม</h2>
+<p>เรารู้จักกันที่ไหน?</p>
+<button onclick="nextQ(0)">TikTok</button>
+<button onclick="nextQ(1)">Facebook</button>
+<button onclick="nextQ(2)">เกม</button>
+<button onclick="nextQ(3)">โรงเรียน</button>
+`
+}
+
+if(stage==2){
+stageDiv.innerHTML=`
+<h2>ด่าน 1 : ข้อที่ 2</h2>
+<p>เราคุยกันครั้งแรกวันอะไร?</p>
+<button onclick="answerStage1(false)">วันจันทร์</button>
+<button onclick="answerStage1(true)">วันอังคาร</button>
+<button onclick="answerStage1(false)">วันศุกร์</button>
+<button onclick="answerStage1(false)">วันเสาร์</button>
+`
+}
+
+if(stage==3){
+stageDiv.innerHTML=`
+<h2>ด่าน 2 : ช่วยตัวประกัน</h2>
+<p>ตัดสายไฟที่ถูกต้อง</p>
+<button onclick="wire(false)">สายแดง</button>
+<button onclick="wire(true)">สายฟ้า</button>
+<button onclick="wire(false)">สายเขียว</button>
+`
+}
+
+if(stage==4){
+stageDiv.innerHTML=`
+<h2>ด่านสุดท้าย</h2>
+<p>ใส่รหัส</p>
+<input id="code" placeholder="ใส่รหัส">
+<br>
+<button onclick="checkCode()">ยืนยัน</button>
+`
+}
+
+}
+
+/* คำถามแรก */
+function nextQ(i){
+if(i==0){
+stage=2
+loadStage()
+}else{
+alert("ผิด ลองใหม่")
+}
+}
+
+/* ตอบข้อสอง */
+function answerStage1(correct){
+if(correct){
+stage=3
+loadStage()
+}else{
+alert("ตอบผิด")
+}
+}
+
+/* สายไฟ */
+function wire(correct){
+if(correct){
+stage=4
+loadStage()
+}else{
+alert("ตัวประกันตาย 💀")
+}
+}
+
+/* รหัส */
+function checkCode(){
+let code=document.getElementById("code").value
+if(code=="1234"){
+window.location.href="pink.html"
+}else{
+alert("รหัสผิด")
+}
+}
+
+</script>
+
+</body>
+</html>

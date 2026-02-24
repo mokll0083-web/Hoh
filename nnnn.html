@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สำหรับเธอ</title>
+
+<style>
+html, body{
+margin:0;
+padding:0;
+width:100%;
+height:100%;
+overflow:hidden;
+background:#ffb6c1;
+font-family:"Comic Sans MS", cursive;
+touch-action:none;
+}
+
+/* ข้อความ */
+.text{
+position:absolute;
+color:white;
+font-size:30px;
+opacity:0;
+transform:scale(0.7);
+transition: all 3s ease;
+text-shadow:0 0 18px rgba(255,255,255,0.9);
+z-index:9999; /* ทำให้ข้อความอยู่บนสุด */
+}
+
+/* กล่องลอย */
+.float{
+position:absolute;
+width:220px;
+height:140px;
+border-radius:14px;
+overflow:hidden;
+box-shadow:0 10px 30px rgba(0,0,0,0.25);
+transition:all 14s linear;
+z-index:1;
+}
+
+.float video,
+.float img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+</style>
+</head>
+<body>
+
+<audio id="music" autoplay loop preload="auto">
+<source src="https://files.catbox.moe/nzxwlu.mp4" type="audio/mp4">
+</audio>
+
+<div id="scene"></div>
+
+<script>
+const scene = document.getElementById("scene")
+const music = document.getElementById("music")
+
+music.playbackRate = 1.1
+
+function startMusic(){
+music.play().then(()=>{
+startMessages()
+}).catch(()=>{})
+}
+
+window.addEventListener("load",startMusic)
+document.addEventListener("click",startMusic)
+document.addEventListener("touchstart",startMusic)
+
+/* ข้อความชุดแรก */
+const messages = [
+"เธอยังจำได้มั้ย",
+"เวลาที่เราอยู่ด้วยกัน",
+"พี่โคตรมีความสุขเลย",
+"พี่ก็ไม่มีอะไรตอบแทนมาก",
+"แต่พี่อยากบอกว่า",
+"ที่รักหนูมากนะ"
+]
+
+/* ข้อความเล่นต่อ */
+const loopMessages = [
+"คิดถึงนะ",
+"อยากอยู่ด้วยกันนานๆ",
+"ทุกช่วงเวลาสำคัญมาก",
+"ขอบคุณที่อยู่ด้วยกัน",
+"รักมากจริงๆ",
+"เธอคือคนที่พี่รักมากที่สุด",
+"ถึงเราจะอยู่ห่างกันแต่สักวันจะได้อยู่ด้วยกัน",
+"พี่จะรอวันที่ได้อยู่ด้วยกันนะ"
+]
+
+/* คลิป */
+const videos = [
+"https://files.catbox.moe/58rz1z.mp4",
+"https://files.catbox.moe/ur56oh.mp4",
+"https://files.catbox.moe/xuhtxi.mp4",
+"https://files.catbox.moe/lv14ae.mp4",
+"https://files.catbox.moe/5z1p2a.mp4"
+]
+
+/* รูป */
+const images = [
+"https://files.catbox.moe/v9gd8n.jpg",
+"https://files.catbox.moe/4pclvj.jpg",
+"https://files.catbox.moe/ufaaa0.jpeg",
+"https://files.catbox.moe/05uqen.jpg",
+"https://files.catbox.moe/sda8fm.jpg"
+]
+
+let index = 0
+let showingText = false
+
+function startMessages(){
+setTimeout(showMessages,1200)
+}
+
+function showMessages(){
+if(showingText) return
+
+if(index >= messages.length){
+startFloating()
+startLoopText()
+return
+}
+
+showingText = true
+createText(messages[index])
+index++
+
+setTimeout(()=>{
+showingText = false
+showMessages()
+},4500)
+}
+
+function createText(message){
+const text = document.createElement("div")
+text.className = "text"
+text.innerText = message
+
+text.style.left = Math.random()*70 + "vw"
+text.style.top = Math.random()*70 + "vh"
+
+scene.appendChild(text)
+
+setTimeout(()=>{
+text.style.opacity = 1
+text.style.transform = "scale(1)"
+},100)
+
+setTimeout(()=>{
+text.style.opacity = 0
+setTimeout(()=>text.remove(),2000)
+},3500)
+}
+
+/* ข้อความเล่นต่อ */
+function startLoopText(){
+setInterval(()=>{
+if(showingText) return
+showingText = true
+
+const msg = loopMessages[Math.floor(Math.random()*loopMessages.length)]
+createText(msg)
+
+setTimeout(()=>{
+showingText = false
+},4500)
+
+},5000)
+}
+
+/* ทิศทางออก */
+function randomExit(){
+const side = Math.floor(Math.random()*4)
+
+if(side===0) return {x:-300, y:Math.random()*window.innerHeight}
+if(side===1) return {x:window.innerWidth+300, y:Math.random()*window.innerHeight}
+if(side===2) return {x:Math.random()*window.innerWidth, y:-300}
+return {x:Math.random()*window.innerWidth, y:window.innerHeight+300}
+}
+
+function createFloat(type,src){
+const box = document.createElement("div")
+box.className="float"
+
+let media
+
+if(type==="video"){
+media=document.createElement("video")
+media.src=src
+media.autoplay=true
+media.loop=true
+media.muted=true
+}else{
+media=document.createElement("img")
+media.src=src
+}
+
+box.appendChild(media)
+scene.appendChild(box)
+
+/* เริ่มกลางจอ */
+box.style.left = (window.innerWidth/2 - 110) + "px"
+box.style.top = (window.innerHeight/2 - 70) + "px"
+
+/* ค่อยๆลอยออก */
+setTimeout(()=>{
+const end = randomExit()
+box.style.left = end.x + "px"
+box.style.top = end.y + "px"
+},800)
+
+setTimeout(()=>{
+box.remove()
+spawn(type)
+},14000)
+}
+
+function spawn(type){
+if(type==="video"){
+const src = videos[Math.floor(Math.random()*videos.length)]
+createFloat("video",src)
+}else{
+const src = images[Math.floor(Math.random()*images.length)]
+createFloat("image",src)
+}
+}
+
+function startFloating(){
+setInterval(()=>spawn("video"),3500)
+setInterval(()=>spawn("image"),3500)
+}
+</script>
+
+</body>
+</html>

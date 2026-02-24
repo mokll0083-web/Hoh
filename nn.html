@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>หน้าเมนู</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#ffd6e7;
+    overflow:hidden;
+}
+
+/* ลูกโป่ง */
+.balloon{
+    position:fixed;
+    width:50px;
+    height:65px;
+    border-radius:50%;
+    animation:moveBalloon linear infinite alternate;
+}
+
+.balloon::after{
+    content:"";
+    position:absolute;
+    bottom:-15px;
+    left:50%;
+    width:2px;
+    height:20px;
+    background:#888;
+    transform:translateX(-50%);
+}
+
+@keyframes moveBalloon{
+    from{
+        transform:translate(0,0);
+    }
+    to{
+        transform:translate(120px,-120px);
+    }
+}
+
+/* เมนู */
+.main{
+    position:fixed;
+    inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.menu{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+    width:320px;
+    z-index:2;
+}
+
+.menu div{
+    background:white;
+    border:2px solid #ff9fcf;
+    border-radius:16px;
+    padding:30px 10px;
+    text-align:center;
+    font-size:18px;
+    color:#ff4fa3;
+    font-weight:bold;
+    transition:0.25s;
+    cursor:pointer;
+}
+
+.menu div:hover{
+    transform:scale(1.05);
+    background:#ffe4f1;
+}
+</style>
+</head>
+
+<body>
+
+<script>
+for(let i=0;i<10;i++){
+    let b=document.createElement("div");
+    b.className="balloon";
+    b.style.left=Math.random()*100+"vw";
+    b.style.top=Math.random()*100+"vh";
+    b.style.background=`hsl(${Math.random()*360},70%,75%)`;
+    b.style.animationDuration=(2+Math.random()*2)+"s";
+    document.body.appendChild(b);
+}
+</script>
+
+<div class="main">
+<div class="menu">
+<div onclick="location.href='nnn.html'">มันครบรอบ</div>
+<div onclick="location.href='nnnn.html'">ความทรงจำ</div>
+<div onclick="location.href='mm.html'">จุดเริ่มต้น</div>
+<div onclick="location.href='mmmm.html'">จดหมาย</div>
+</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>วันครบรอบ</title>
+
+<style>
+body{
+    margin:0;
+    height:100vh;
+    overflow:hidden;
+    background:white;
+    font-family:Arial, sans-serif;
+}
+
+/* กุหลาบตก */
+.rose{
+    position:fixed;
+    top:-60px;
+    font-size:30px;
+    animation:roseFall linear forwards;
+}
+
+@keyframes roseFall{
+    to{
+        transform:translateY(110vh) rotate(360deg);
+    }
+}
+
+/* จุดสี */
+.paint{
+    position:fixed;
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    opacity:0;
+    animation:paintDrop 0.8s forwards;
+}
+
+@keyframes paintDrop{
+    from{ transform:scale(0); opacity:0; }
+    to{ transform:scale(1); opacity:0.9; }
+}
+
+/* พื้นหลังชมพู */
+.pinkBG{
+    animation:bgPink 1.5s forwards;
+}
+
+@keyframes bgPink{
+    from{ background:white; }
+    to{ background:#ffd6e7; }
+}
+
+/* รถ + ป้าย */
+.truckBox{
+    position:fixed;
+    bottom:180px;
+    right:-500px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    animation:moveTruck 3s forwards;
+}
+
+@keyframes moveTruck{
+    to{
+        right:calc(50% - 180px);
+    }
+}
+
+.truck{
+    font-size:60px;
+}
+
+/* ป้าย */
+.board{
+    width:260px;
+    background:white;
+    border-radius:14px;
+    padding:16px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+    text-align:center;
+}
+
+.box{
+    background:#ffe4f1;
+    margin-top:8px;
+    padding:10px;
+    border-radius:10px;
+    font-weight:bold;
+    color:#ff4fa3;
+}
+
+/* กุหลาบช่อใหญ่ด้านหลัง */
+.bigRose{
+    position:fixed;
+    font-size:80px;
+    opacity:0.5;
+    z-index:-1;
+    animation:floatRose 1.2s infinite alternate ease-in-out;
+}
+
+@keyframes floatRose{
+    from{
+        transform:translateX(-40px) rotate(-5deg);
+    }
+    to{
+        transform:translateX(40px) rotate(5deg);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="truckContainer" class="truckBox" style="display:none;">
+<div class="truck">🚚</div>
+<div class="board">
+<div class="box">วันครบรอบ: 14 พฤศจิกายน</div>
+<div class="box" id="countdown">กำลังคำนวณ...</div>
+</div>
+</div>
+
+<script>
+
+/* กุหลาบตก */
+for(let i=0;i<20;i++){
+    let r=document.createElement("div");
+    r.className="rose";
+    r.innerHTML="🌹";
+    r.style.left=Math.random()*100+"vw";
+    r.style.animationDuration=(2+Math.random()*2)+"s";
+    document.body.appendChild(r);
+}
+
+/* จุดสี */
+setTimeout(()=>{
+    const colors=["#ff4fa3","#ff9fcf","#ff6ec7","#ffa6d1","#ffc0da","#ff7eb6"];
+    for(let i=0;i<25;i++){
+        let p=document.createElement("div");
+        p.className="paint";
+        p.style.left=Math.random()*100+"vw";
+        p.style.top=Math.random()*100+"vh";
+        p.style.background=colors[Math.floor(Math.random()*colors.length)];
+        p.style.animationDelay=(Math.random()*1)+"s";
+        document.body.appendChild(p);
+    }
+},3000);
+
+/* เปลี่ยนพื้นหลัง */
+setTimeout(()=>{
+    document.body.classList.add("pinkBG");
+},4500);
+
+/* จุดสีจางแบบสุ่ม */
+setTimeout(()=>{
+    document.querySelectorAll(".paint").forEach(e=>{
+        setTimeout(()=>{
+            e.style.transition="opacity 1.5s";
+            e.style.opacity="0";
+        },Math.random()*1500);
+    });
+},5000);
+
+/* ลบจุดสี */
+setTimeout(()=>{
+    document.querySelectorAll(".paint").forEach(e=>e.remove());
+},7000);
+
+/* รถลากป้าย */
+setTimeout(()=>{
+    const truck=document.getElementById("truckContainer");
+    truck.style.display="flex";
+},6200);
+
+/* เพิ่มช่อกุหลาบลอยด้านหลัง */
+setTimeout(()=>{
+    for(let i=0;i<5;i++){
+        let br=document.createElement("div");
+        br.className="bigRose";
+        br.innerHTML="💐";
+        br.style.left=Math.random()*90+"vw";
+        br.style.top=Math.random()*80+"vh";
+        br.style.animationDelay=(Math.random()*1)+"s";
+        document.body.appendChild(br);
+    }
+},9000);
+
+
+/* ระบบนับถอยหลัง */
+function updateCountdown(){
+    const now=new Date();
+    let year=now.getFullYear();
+    let target=new Date(year,10,14,0,0,0);
+
+    if(now>target){
+        target=new Date(year+1,10,14,0,0,0);
+    }
+
+    const diff=target-now;
+
+    const d=Math.floor(diff/(1000*60*60*24));
+    const h=Math.floor((diff/(1000*60*60))%24);
+    const m=Math.floor((diff/(1000*60))%60);
+    const s=Math.floor((diff/1000)%60);
+
+    document.getElementById("countdown").innerHTML =
+    d+" วัน "+h+" ชม. "+m+" นาที "+s+" วิ";
+}
+
+setInterval(updateCountdown,1000);
+updateCountdown();
+
+</script>
+
+</body>
+</html>
